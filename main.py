@@ -1,3 +1,4 @@
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 import time
 import traceback
@@ -6,9 +7,6 @@ import pytesseract as pt
 from PIL import Image
 import os
 import config
-import re
-
-pt.pytesseract.tesseract_cmd = 'Tesseract-OCR/tesseract.exe'
 
 graphic_boxes = {
     1080: (0, 1030, 330, 1080)
@@ -70,14 +68,12 @@ def diff(s1, s2):
 
 
 def adb(q):
-    os.chdir('adb')
     os.system('adb ' + q)
-    os.chdir('..')
 
 
 def get_screenshot() -> Image.Image:
     adb('shell screencap -p sdcard/scr.png')
-    adb('pull sdcard/scr.png ../scr.png')
+    adb('pull sdcard/scr.png scr.png')
     adb('shell rm sdcard/scr.png')
     return Image.open('scr.png')
 
