@@ -40,9 +40,15 @@ def text_recognize(im: Image.Image, box: Tuple[int, int, int, int], filename: st
     return pt.image_to_string(f'data/{filename}.png').lower().strip()
 
 
-def similarity(original: str, choices: List[str], percent: int) -> bool:
+def similarity(original: str, choices: List[str], percent: int, blacklist=None) -> bool:
+    if blacklist is None:
+        blacklist = []
+
     for i in choices:
         if diff(i, original) > percent or i in original.split():
+            for j in blacklist:
+                if diff(j, original) > percent or j in original.split():
+                    return False
             return True
 
     return False
@@ -125,14 +131,12 @@ class ADBClicker:
         if res:
             print('second_exit: ' + res)
 
-        return similarity(res, ['exit', 'next'], 70)
+        return similarity(res, ['exit', 'next'], 70, blacklist=['cancel'])
 
     def press(self):
         adb(f'shell input tap {self.press_point}')
 
     def main_loop(self):
-        adb(f'connect {config.ip}')
-
         while True:
             press_point = None
             in_battle = False
