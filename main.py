@@ -136,15 +136,7 @@ def second_exit_screen(im):
 
 
 def main():
-    if not config.usb:
-        adb('tcpip 5555')
-        print('Отключите устройство')
-        print('Подключение через:')
-        for i in range(10):
-            time.sleep(1)
-            print(9 - i)
-        adb(f'connect {config.ip}')
-
+    adb(f"connect {config.ip}")
     while True:
         time.sleep(config.repeat_interval)
 
@@ -162,8 +154,7 @@ def main():
                 p = ' '.join(list(map(str, p)))
                 c = ' '.join(map(str, [image.size[0] - 80, 80]))
                 adb(f'shell input tap {c}')
-                adb(f'shell input swipe {p}')
-                adb(f'shell input swipe 50 50 50 50 1000')
+                adb(f'shell input swipe 50 50 50 50 5500')
 
         if config.with_first_exit_screen:
             if first_exit_screen(image):
