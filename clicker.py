@@ -104,7 +104,7 @@ class ADBClicker:
         if res:
             print('lobby: ' + res)
 
-        return similarity(res, ['start', 'next', 'ready'], 60)
+        return similarity(res, ['start', 'next', 'ready'], 60, ['cancel'])
 
     def battle(self, filename: str) -> bool:
         im = Image.open(filename)
