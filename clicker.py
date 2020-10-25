@@ -69,6 +69,15 @@ def run_futures(functions):
     return res
 
 
+def suicide(image):
+    swipe = geometries[max(image.size)]['swipe']
+    swipe = ' '.join(list(map(str, swipe)))
+    change_weapon = ' '.join(map(str, [image.size[0] - 80, 80]))
+    adb(f'shell input tap {change_weapon}')
+    adb(f'shell input swipe {swipe}')
+    adb(f'shell input swipe 50 50 50 50 5500')
+
+
 class ADBClicker:
     geoms = geometries
     g_box = graphic_boxes
@@ -142,12 +151,7 @@ class ADBClicker:
                 """result of "battle" function"""
                 in_battle = True
                 if config.suicide:
-                    swipe = geometries[max(image.size)]['swipe']
-                    swipe = ' '.join(list(map(str, swipe)))
-                    c = ' '.join(map(str, [image.size[0] - 80, 80]))
-                    adb(f'shell input tap {c}')
-                    adb(f'shell input swipe {swipe}')
-                    adb(f'shell input swipe 50 50 50 50 5500')
+                    suicide(image)
 
             if config.with_first_exit_screen:
                 if res[2]:
