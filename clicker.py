@@ -181,7 +181,7 @@ class ADBClicker:
 
 p = argparse.ArgumentParser()
 p.add_argument('-device-name')
-device_name = p.parse_args()['device_name']
+device_name = p.parse_args().device_name
 
 if __name__ == '__main__':
     ADBClicker().main_loop()
