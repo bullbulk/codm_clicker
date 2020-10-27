@@ -28,10 +28,11 @@ class Clicker:
             raise classes.errors.DevicesNotFound('Устройства не найдены')
 
         adb('devices > server.txt')
-        self.device_name = re.search(r'emulator-\d', open('server.txt').read())
+        self.device_name = re.search(r'emulator-\d+', open('server.txt').read())
         if not self.device_name:
             raise classes.errors.DevicesNotFound('Устройства не найдены')
-        
+        self.device_name = self.device_name.string
+
         adb('shell mkdir -p /sdcard/codm_clicker')
 
     def run_clicker(self):
