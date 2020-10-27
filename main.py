@@ -4,6 +4,7 @@ import config
 from clicker import *
 from subprocess import Popen
 import platform
+import classes.errors
 
 if platform.system() == 'Windows':
     NULL = 'NUL'
@@ -18,7 +19,9 @@ class Clicker:
 
     def connect(self):
         adb('kill-server')
-        adb('start-server')
+        adb('start-server > server.txt')
+        if 'error: no devices/emulators found' in open('server.txt').readlines():
+            raise classes.errors.DevicesNotFound('Устройства не найдены')
         adb('shell mkdir -p /sdcard/codm_clicker')
 
     def run_clicker(self):

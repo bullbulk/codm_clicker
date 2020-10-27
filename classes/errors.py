@@ -1,0 +1,2 @@
+class DevicesNotFound(BaseException):
+    pass
