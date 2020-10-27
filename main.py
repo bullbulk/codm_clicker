@@ -22,7 +22,8 @@ class Clicker:
         adb('shell mkdir -p /sdcard/codm_clicker')
 
     def run_clicker(self):
-        self.proc = Popen([sys.executable, 'clicker.py'], stdout=open('out.log', 'a'), stderr=open('err.log', 'a'))
+        #self.proc = Popen([sys.executable, 'clicker.py'], stdout=open('out.log', 'a'), stderr=open('err.log', 'a'))
+        os.system('python clicker.py')
 
     def main(self):
         self.connect()
