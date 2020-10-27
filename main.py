@@ -18,6 +18,7 @@ class Clicker:
     listener = None
 
     def connect(self):
+        adb('disconnect')
         adb('kill-server')
         adb('start-server > server.txt')
         if 'error: no devices/emulators found' in open('server.txt').readlines():
