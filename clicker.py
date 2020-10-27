@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import concurrent.futures
 import os
+import sys
 import time
 from typing import List, Tuple
 
@@ -10,6 +11,7 @@ from PIL import Image
 
 import config
 from props import *
+import argparse
 
 try:
     os.listdir('data')
@@ -28,7 +30,7 @@ def diff(s1: str, s2: str) -> float:
 
 
 def adb(comm) -> None:
-    os.system('adb ' + comm)
+    os.system(f'adb -s {device_name} ' + comm)
 
 
 def text_recognize(im: Image.Image, box: Tuple[int, int, int, int], filename: str) -> str:
@@ -176,6 +178,10 @@ class ADBClicker:
             else:
                 self.repeat_interval = config.repeat_interval - estimated
 
+
+p = argparse.ArgumentParser()
+p.add_argument('-device-name')
+device_name = p.parse_args()['device_name']
 
 if __name__ == '__main__':
     ADBClicker().main_loop()

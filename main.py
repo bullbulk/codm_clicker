@@ -1,3 +1,4 @@
+import re
 import sys
 
 import config
@@ -16,19 +17,27 @@ class Clicker:
     power_key_events = 0
     proc = None
     listener = None
+    device_name = ''
 
     def connect(self):
         adb('disconnect')
         adb('kill-server')
         adb('start-server > server.txt')
+
         if 'error: no devices/emulators found' in open('server.txt').readlines():
             raise classes.errors.DevicesNotFound('Устройства не найдены')
+
+        adb('devices > server.txt')
+        self.device_name = re.search(r'emulator-\d', open('server.txt').read())
+        if not self.device_name:
+            raise classes.errors.DevicesNotFound('Устройства не найдены')
+        
         adb('shell mkdir -p /sdcard/codm_clicker')
 
     def run_clicker(self):
         #self.proc = Popen([sys.executable, 'clicker.py'], stdout=open('out.log', 'a'), stderr=open('err.log', 'a'))
         self.connect()
-        os.system('python clicker.py')
+        os.system(f'python clicker.py -device-name {self.device_name}')
 
     def main(self):
         self.connect()
