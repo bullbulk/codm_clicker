@@ -23,6 +23,7 @@ class Clicker:
 
     def run_clicker(self):
         #self.proc = Popen([sys.executable, 'clicker.py'], stdout=open('out.log', 'a'), stderr=open('err.log', 'a'))
+        self.connect()
         os.system('python clicker.py')
 
     def main(self):
