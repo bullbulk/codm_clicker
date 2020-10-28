@@ -149,6 +149,7 @@ class ADBClicker:
             time.sleep(self.repeat_interval)
             t = time.time()
             res = run_futures(self.funcs)
+            print(res)
 
             if res[0]:
                 """result of "lobby_and_br" function"""
