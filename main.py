@@ -54,7 +54,7 @@ class Clicker:
         with open('data/listener_pid', 'w') as f:
             f.write(str(self.listener.pid))
 
-        self.notificator = Popen([sys.executable, 'data/notificator_service.py'])
+        self.notificator = Popen([sys.executable, 'data/notificator_service.py'], stdout=sys.stdout)
         os.kill(self.notificator.pid, int(signal.SIGUSR1))
 
         print('Кликер готов к запуску\nНажмите кнопку уменьшения громкости 2 раза, чтобы запустить/остановить')
