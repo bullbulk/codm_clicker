@@ -31,6 +31,7 @@ else:
     pid_using = True
 
 while pid_using:
+    print(2)
     try:
         os.kill(pid, 0)
     except OSError:
