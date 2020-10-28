@@ -42,8 +42,6 @@ def similarity(original: str, choices: List[str], percent: int, blacklist=None) 
     if blacklist is None:
         blacklist = []
 
-    print(blacklist, choices)
-
     for j in blacklist:
         if diff(j, original) > percent or j in original.split():
             print(1)
@@ -149,7 +147,6 @@ class ADBClicker:
             time.sleep(self.repeat_interval)
             t = time.time()
             res = run_futures(self.funcs)
-            print(res)
 
             if res[0]:
                 """result of "lobby_and_br" function"""

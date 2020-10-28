@@ -48,20 +48,23 @@ class Clicker:
         print('Кликер готов к запуску\nНажмите кнопку уменьшения громкости 2 раза, чтобы запустить/остановить')
 
         while True:
-            subprocess.run(f'adb -s {self.device_name} pull /sdcard/codm_clicker/events.txt data/events.txt > data/null', shell=True)
+            subprocess.run(f'adb -s {self.device_name} pull /sdcard/codm_clicker/events.txt data/events.txt > data/null',
+                           shell=True)
 
             events = open('data/events.txt', 'r').readlines()
             events = list(filter(lambda x: '0001 0072 00000001' in x, events))
             if len(events) - self.run_key_events == 2:
                 times = list(map(lambda x: float(re.search(r'\d+.\d+', x).group()), events))
-                print(times)
-                if not self.proc:
-                    self.run_clicker()
-                    print('Кликер запущен')
-                else:
-                    self.proc.kill()
-                    self.proc = None
-                    print('Кликер остановлен')
+                diff = times[-1] - times[-2]
+                print(diff)
+                if diff <= 0.400:
+                    if not self.proc:
+                        self.run_clicker()
+                        print('Кликер запущен')
+                    else:
+                        self.proc.kill()
+                        self.proc = None
+                        print('Кликер остановлен')
 
                 self.run_key_events = len(events)
 
