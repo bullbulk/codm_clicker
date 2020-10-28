@@ -42,12 +42,16 @@ def similarity(original: str, choices: List[str], percent: int, blacklist=None) 
     if blacklist is None:
         blacklist = []
 
+    print(blacklist, choices)
+
     for j in blacklist:
         if diff(j, original) > percent or j in original.split():
+            print(1)
             return False
 
     for i in choices:
         if diff(i, original) > percent or i in original.split():
+            print(2)
             return True
 
     return False
