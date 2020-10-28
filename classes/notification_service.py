@@ -1,5 +1,4 @@
 import os
-import psutil
 import signal
 
 RUNNING = False
@@ -21,9 +20,24 @@ def handler(signal, frame):
 
 signal.signal(signal.SIGUSR1, handler)
 
-p = psutil.Process(int(open('data/listener_pid', 'r').read()))
-while p.status() == psutil.STATUS_RUNNING:
-    pass
+pid = int(open('../data/listener_pid', 'r').read())
+pid_using = True
+
+try:
+    os.kill(pid, 0)
+except OSError:
+    pid_using = False
+else:
+    pid_using = True
+
+while pid_using:
+    global pid_using
+    try:
+        os.kill(pid, 0)
+    except OSError:
+        pid_using = False
+    else:
+        pid_using = True
 
 else:
     os.system('termux-notification-remove "clicker"')
