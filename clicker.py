@@ -1,8 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+import argparse
 import concurrent.futures
 import os
-import sys
 import time
 from typing import List, Tuple
 
@@ -11,7 +11,6 @@ from PIL import Image
 
 import config
 from props import *
-import argparse
 
 try:
     os.listdir('data')
