@@ -1,20 +1,22 @@
 import re
 import sys
+import traceback
 
 import config
 from clicker import *
 from subprocess import Popen
+import subprocess
 import platform
 import classes.errors
 
 if platform.system() == 'Windows':
     NULL = 'NUL'
 else:
-    NULL = '/dev/null'
+    NULL = 'data/null'
 
 
 class Clicker:
-    power_key_events = 0
+    run_key_events = 0
     proc = None
     listener = None
     device_name = ''
@@ -31,24 +33,28 @@ class Clicker:
         self.device_name = re.search(r'emulator-\d+', open('server.txt').read())
         if not self.device_name:
             raise classes.errors.DevicesNotFound('Устройства не найдены')
-        self.device_name = self.device_name.string
+        self.device_name = self.device_name.group()
 
-        adb('shell mkdir -p /sdcard/codm_clicker')
+        adb('shell mkdir -p /sdcard/codm_clicker', self.device_name)
 
     def run_clicker(self):
-        #self.proc = Popen([sys.executable, 'clicker.py'], stdout=open('out.log', 'a'), stderr=open('err.log', 'a'))
-        self.connect()
-        os.system(f'python clicker.py -device-name {self.device_name}')
+        self.proc = Popen([sys.executable, 'clicker.py', '--device-name', self.device_name],
+                          stdout=open('out.log', 'a'), stderr=open('err.log', 'a'))
 
     def main(self):
         self.connect()
-        self.listener = Popen('adb shell getevent -q /dev/input/event1 > /sdcard/codm_clicker/events.txt')
+        self.listener = Popen(['adb', '-s', self.device_name, 'shell', 'getevent', '-q', '-t', '/dev/input/event1', '> '
+                              f'/sdcard/codm_clicker/events.txt'])
+        print('Кликер готов к запуску\nНажмите кнопку уменьшения громкости 2 раза, чтобы запустить/остановить')
 
         while True:
-            adb(f'pull /sdcard/codm_clicker/events.txt data/events.txt > {NULL}')
+            subprocess.run(f'adb -s {self.device_name} pull /sdcard/codm_clicker/events.txt data/events.txt > data/null', shell=True)
+
             events = open('data/events.txt', 'r').readlines()
-            events = list(filter(lambda x: x == '0001 0074 00000001\n', events))
-            if len(events) != self.power_key_events:
+            events = list(filter(lambda x: '0001 0072 00000001' in x, events))
+            if len(events) - self.run_key_events == 2:
+                times = list(map(lambda x: float(re.search(r'\d+.\d+', x).group()), events))
+                print(times)
                 if not self.proc:
                     self.run_clicker()
                     print('Кликер запущен')
@@ -57,12 +63,13 @@ class Clicker:
                     self.proc = None
                     print('Кликер остановлен')
 
-                self.power_key_events = len(events)
+                self.run_key_events = len(events)
 
 
 c = Clicker()
 try:
-    c.run_clicker()
+    c.main()
 except:
+    traceback.print_exc()
     c.proc.kill() if c.proc else ''
     c.listener.kill() if c.listener else ''

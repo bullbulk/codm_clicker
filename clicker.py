@@ -29,8 +29,8 @@ def diff(s1: str, s2: str) -> float:
     return c / (a + b - c) * 100
 
 
-def adb(comm) -> None:
-    os.system(f'adb -s {device_name} ' + comm)
+def adb(comm, d_name=None) -> None:
+    os.system(f'adb -s {device_name if device_name else d_name} ' + comm)
 
 
 def text_recognize(im: Image.Image, box: Tuple[int, int, int, int], filename: str) -> str:
@@ -42,11 +42,12 @@ def similarity(original: str, choices: List[str], percent: int, blacklist=None) 
     if blacklist is None:
         blacklist = []
 
+    for j in blacklist:
+        if diff(j, original) > percent or j in original.split():
+            return False
+
     for i in choices:
         if diff(i, original) > percent or i in original.split():
-            for j in blacklist:
-                if diff(j, original) > percent or j in original.split():
-                    return False
             return True
 
     return False
@@ -180,7 +181,7 @@ class ADBClicker:
 
 
 p = argparse.ArgumentParser()
-p.add_argument('-device-name')
+p.add_argument('--device-name')
 device_name = p.parse_args().device_name
 
 if __name__ == '__main__':
