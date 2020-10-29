@@ -1,4 +1,3 @@
-import platform
 import re
 import subprocess
 import sys
@@ -8,11 +7,6 @@ from subprocess import Popen
 import classes.errors
 from clicker import *
 
-if platform.system() == 'Windows':
-    NULL = 'NUL'
-else:
-    NULL = 'data/null'
-
 
 class Clicker:
     run_key_events = 0
@@ -20,6 +14,7 @@ class Clicker:
     listener = None
     notificator = None
     device_name = ''
+    home_path = ''
 
     def connect(self):
         adb('disconnect')
@@ -34,6 +29,8 @@ class Clicker:
         if not self.device_name:
             raise classes.errors.DevicesNotFound('Устройства не найдены')
         self.device_name = self.device_name.group()
+
+        Popen('shell ls sdcard', stdout=open('data/ls', 'w'))
 
         adb('shell mkdir -p /sdcard/codm_clicker', self.device_name)
 
