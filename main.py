@@ -53,9 +53,11 @@ class Clicker:
 
         with open('data/listener_pid', 'w') as f:
             f.write(str(self.listener.pid))
+        print(self.listener.pid)
 
         self.notificator = Popen([sys.executable, 'classes/notification_service.py'], stderr=sys.stdout)
-        os.kill(self.notificator.pid, int(signal.SIGUSR1))
+        print(self.notificator.pid)
+        os.kill(self.notificator.pid, signal.SIGUSR1)
 
         print('Кликер готов к запуску\nНажмите кнопку уменьшения громкости 2 раза, чтобы запустить/остановить')
 
@@ -72,10 +74,10 @@ class Clicker:
                 diff = times[-1] - times[-2]
                 if diff <= 0.500:
                     if not self.proc:
-                        os.kill(self.notificator.pid, int(signal.SIGUSR1))
+                        os.kill(self.notificator.pid, signal.SIGUSR1)
                         self.run_clicker()
                     else:
-                        os.kill(self.notificator.pid, int(signal.SIGUSR1))
+                        os.kill(self.notificator.pid, signal.SIGUSR1)
                         self.proc.kill()
                         self.proc = None
 
