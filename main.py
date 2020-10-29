@@ -43,6 +43,7 @@ class Clicker:
 
         while True:
             up, down = self.get_new_events()
+            print(up, down)
 
             if len(down) - self.run_key_events == 2:
                 diff = down[-1] - down[-2]
@@ -55,10 +56,10 @@ class Clicker:
 
             if len(up) - self.close_key_events == 2:
                 diff = up[-1] - up[-2]
-                print(diff)
                 self.close_key_events = len(up)
-                if diff <= 0.750:
+                if diff <= 0.500:
                     exit()
+                    sys.exit()
 
     def vibrate(self, ms):
         os.system(f'termux-vibrate -f -d {ms}')
@@ -121,10 +122,12 @@ c = Clicker()
 def exit():
     c.proc.kill() if c.proc else ''
     c.listener.kill() if c.listener else ''
-    sys.exit()
+
 
 try:
     c.main()
+except SystemExit:
+    pass
 except:
     traceback.print_exc()
     exit()
