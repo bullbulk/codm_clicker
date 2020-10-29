@@ -80,7 +80,6 @@ class Clicker:
         self.download_event()
         up, down = [], []
         for i in open('data/events.txt', 'r').readlines():
-            print(i)
             if i == '0001 0073 00000001':
                 print(i)
                 up.append(float(re.search(r'\d+.\d+', i).group()))
