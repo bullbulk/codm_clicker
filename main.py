@@ -30,59 +30,68 @@ class Clicker:
     def connect(self):
         adb('disconnect')
         adb('kill-server')
-        adb('start-server > server.txt')
+        adb('start-server > data/server')
 
-        if 'error: no devices/emulators found' in open('server.txt').readlines():
+        if 'error: no devices/emulators found' in open('data/server').readlines():
             raise classes.errors.DevicesNotFound('Устройства не найдены')
 
-        adb('devices > server.txt')
-        self.device_name = re.search(r'emulator-\d+', open('server.txt').read())
+        adb('devices > data/server')
+        self.device_name = re.search(r'emulator-\d+', open('data/server').read())
         if not self.device_name:
             raise classes.errors.DevicesNotFound('Устройства не найдены')
         self.device_name = self.device_name.group()
 
         adb('shell mkdir -p /sdcard/codm_clicker', self.device_name)
 
-    def run_clicker(self):
-        self.proc = Popen([sys.executable, 'clicker.py', '--device-name', self.device_name],
-                          stdout=open('out.log', 'a'), stderr=open('err.log', 'a'))
-
     def main(self):
         self.connect()
-        self.listener = Popen(['adb', '-s', self.device_name, 'shell', 'getevent', '-q', '-t',
-                               '/dev/input/event1', '> '
-                                                    f'/sdcard/codm_clicker/events.txt'])
-
-        with open('classes/data/listener_pid', 'w') as f:
-            f.write(str(self.listener.pid))
-
-        self.notificator = Popen([sys.executable, 'classes/notification_service.py > a.txt'])
-        os.kill(self.notificator.pid, signal.SIGUSR1)
+        self.start_listener()
 
         print('Кликер готов к запуску\nНажмите кнопку уменьшения громкости 2 раза, чтобы запустить/остановить')
 
         while True:
-            subprocess.run(
-                f'adb -s {self.device_name} pull /sdcard/codm_clicker/events.txt data/events.txt > data/null',
-                shell=True)
-
-            events = open('data/events.txt', 'r').readlines()
-            events = list(filter(lambda x: '0001 0072 00000001' in x, events))
+            events = self.get_new_events()
 
             if len(events) - self.run_key_events == 2:
                 times = list(map(lambda x: float(re.search(r'\d+.\d+', x).group()), events))
                 diff = times[-1] - times[-2]
                 if diff <= 0.500:
                     if not self.proc:
-                        os.kill(self.notificator.pid, signal.SIGUSR1)
-                        self.run_clicker()
+                        self.start_clicker()
                     else:
-                        os.kill(self.notificator.pid, signal.SIGUSR1)
-                        self.proc.kill()
-                        self.proc = None
+                        self.stop_clicker()
 
                 self.run_key_events = len(events)
 
+    def vibrate(self, ms):
+        os.system(f'termux-vibrate -f -d {ms}')
+
+    def download_event(self):
+        subprocess.run(
+            f'adb -s {self.device_name} pull /sdcard/codm_clicker/events.txt data/events.txt > data/null',
+            shell=True
+        )
+
+    def start_listener(self):
+        self.listener = Popen(
+            ['adb', '-s', self.device_name, 'shell', 'getevent', '-q', '-t',
+             '/dev/input/event1', '> '
+                                  f'/sdcard/codm_clicker/events.txt']
+        )
+
+    def get_new_events(self):
+        self.download_event()
+        return list(filter(lambda x: '0001 0072 00000001' in x, open('data/events.txt', 'r').readlines()))
+
+    def start_clicker(self):
+        self.vibrate(100)
+        self.proc = Popen([sys.executable, 'clicker.py', '--device-name', self.device_name],
+                          stdout=open('out.log', 'a'), stderr=open('err.log', 'a'))
+
+    def stop_clicker(self):
+        self.vibrate(100)
+        self.proc.kill()
+        self.proc = None
 
 c = Clicker()
 try:
