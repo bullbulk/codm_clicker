@@ -43,11 +43,10 @@ class Clicker:
 
         while True:
             up, down = self.get_new_events()
-            print(len(down), self.run_key_events)
 
             if len(down) - self.run_key_events == 2:
                 diff = down[-1] - down[-2]
-                self.close_key_events = len(down)
+                self.run_key_events = len(down)
                 if diff <= 0.500:
                     if not self.proc:
                         self.start_clicker()
