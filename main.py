@@ -30,7 +30,7 @@ class Clicker:
             raise classes.errors.DevicesNotFound('Устройства не найдены')
         self.device_name = self.device_name.group()
 
-        Popen('shell ls sdcard', stdout=open('data/ls', 'w'))
+        Popen(['adb', 'shell ls sdcard'], stdout=open('data/ls', 'w'))
 
         adb('shell mkdir -p /sdcard/codm_clicker', self.device_name)
 
