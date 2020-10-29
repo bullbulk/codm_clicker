@@ -20,7 +20,7 @@ def handler(signal, frame):
 
 signal.signal(signal.SIGUSR1, handler)
 
-pid = int(open('listener_pid', 'r').read())
+pid = int(open('../data/listener_pid', 'r').read())
 with open('ntf_pid', 'w') as f:
     f.write(str(os.getpid()))
 
