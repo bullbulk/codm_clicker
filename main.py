@@ -30,7 +30,7 @@ class Clicker:
             raise classes.errors.DevicesNotFound('Устройства не найдены')
         self.device_name = self.device_name.group()
 
-        subprocess.run(['adb', 'shell', 'ls', 'sdcard'], stdout=open('data/ls', 'w'))
+        self.set_home()
 
         adb('shell mkdir -p /sdcard/codm_clicker', self.device_name)
 
@@ -84,6 +84,21 @@ class Clicker:
         self.proc.kill()
         self.proc = None
 
+    def set_home(self):
+        if 'home' not in os.listdir('data'):
+            subprocess.run(['adb', 'shell', 'ls', 'sdcard'], stdout=open('data/ls', 'w'))
+            with open('data/ls', 'r') as f:
+                lines = f.readlines()
+                if len(lines) <= 5:
+                    self.home_path = '/sdcard/0'
+                else:
+                    self.home_path = '/sdcard'
+            os.remove('data/ls')
+            with open('data/home', 'w') as f:
+                f.write(self.home_path)
+        else:
+            with open('data/home', 'r') as f:
+                self.home_path = f.read()
 
 c = Clicker()
 try:
