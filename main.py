@@ -52,13 +52,14 @@ class Clicker:
                         self.start_clicker()
                     else:
                         self.stop_clicker()
+                self.close_key_events = len(up)
+
             if len(up) - self.close_key_events == 2:
                 diff = up[-1] - up[-2]
                 if diff <= 0.750:
                     exit()
 
-            self.close_key_events = len(up)
-            self.run_key_events = len(down)
+                self.run_key_events = len(down)
 
     def vibrate(self, ms):
         os.system(f'termux-vibrate -f -d {ms}')
