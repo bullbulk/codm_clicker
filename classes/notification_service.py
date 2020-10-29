@@ -21,6 +21,7 @@ def handler(signal, frame):
 signal.signal(signal.SIGUSR1, handler)
 
 pid = int(open('data/listener_pid', 'r').read())
+os.system('echo 13 > a.txt')
 with open('data/ntf_pid', 'w') as f:
     f.write(str(os.getpid()))
 
