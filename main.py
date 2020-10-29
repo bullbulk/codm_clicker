@@ -55,6 +55,7 @@ class Clicker:
 
             if len(up) - self.close_key_events == 2:
                 diff = up[-1] - up[-2]
+                print(diff)
                 self.close_key_events = len(up)
                 if diff <= 0.750:
                     exit()
@@ -120,7 +121,7 @@ c = Clicker()
 def exit():
     c.proc.kill() if c.proc else ''
     c.listener.kill() if c.listener else ''
-
+    sys.exit()
 
 try:
     c.main()
