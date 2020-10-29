@@ -54,7 +54,7 @@ class Clicker:
         with open('data/listener_pid', 'w') as f:
             f.write(str(self.listener.pid))
 
-        self.notificator = Popen([sys.executable, '"classes/notification_service.py"'])
+        self.notificator = Popen('python classes/notification_service.py')
         print(self.notificator.pid)
         os.kill(self.notificator.pid, signal.SIGUSR1)
 
