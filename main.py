@@ -56,8 +56,6 @@ class Clicker:
                 if diff <= 0.750:
                     exit()
 
-            with open('data/events.txt', 'w') as f:
-                f.write()
             self.close_key_events = len(up)
             self.run_key_events = len(down)
 
