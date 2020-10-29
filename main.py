@@ -19,9 +19,6 @@ try:
 except FileNotFoundError:
     os.mkdir('classes/data')
 
-notification = 'termux-notification -c "Кликер запущен" --priority max --id "clicker" --vibrate 100 --ongoing'
-remove_notification = 'termux-notification-remove "codm"'
-
 
 class Clicker:
     run_key_events = 0
@@ -56,10 +53,10 @@ class Clicker:
                                '/dev/input/event1', '> '
                                                     f'/sdcard/codm_clicker/events.txt'])
 
-        with open('data/listener_pid', 'w') as f:
+        with open('classes/data/listener_pid', 'w') as f:
             f.write(str(self.listener.pid))
 
-        self.notificator = Popen([sys.executable, 'notification_service.py'])
+        self.notificator = Popen([sys.executable, 'classes/notification_service.py > a.txt'])
         os.kill(self.notificator.pid, signal.SIGUSR1)
 
         print('Кликер готов к запуску\nНажмите кнопку уменьшения громкости 2 раза, чтобы запустить/остановить')
