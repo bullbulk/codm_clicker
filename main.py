@@ -51,7 +51,7 @@ class Clicker:
                                '/dev/input/event1', '> '
                                                     f'/sdcard/codm_clicker/events.txt'])
 
-        with open('data/listener_pid', 'w') as f:
+        with open('classes/data/listener_pid', 'w') as f:
             f.write(str(self.listener.pid))
 
         self.notificator = Popen([sys.executable, 'classes/notification_service.py'])
