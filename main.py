@@ -10,6 +10,7 @@ from clicker import *
 
 class Clicker:
     run_key_events = 0
+    close_key_events = 0
     proc = None
     listener = None
     notificator = None
@@ -38,21 +39,27 @@ class Clicker:
         self.connect()
         self.start_listener()
 
-        print('Кликер готов к запуску\nНажмите кнопку уменьшения громкости 2 раза, чтобы запустить/остановить')
+        print('\nКликер готов к запуску\nНажмите кнопку уменьшения громкости 2 раза, чтобы запустить/остановить')
 
         while True:
-            events = self.get_new_events()
+            up, down = self.get_new_events()
 
-            if len(events) - self.run_key_events == 2:
-                times = list(map(lambda x: float(re.search(r'\d+.\d+', x).group()), events))
-                diff = times[-1] - times[-2]
+            if len(down) - self.run_key_events == 2:
+                diff = down[-1] - down[-2]
                 if diff <= 0.500:
                     if not self.proc:
                         self.start_clicker()
                     else:
                         self.stop_clicker()
+            if len(up) - self.close_key_events == 2:
+                diff = up[-1] - up[-2]
+                if diff <= 0.750:
+                    exit()
 
-                self.run_key_events = len(events)
+            with open('data/events.txt', 'w') as f:
+                f.write()
+            self.close_key_events = len(up)
+            self.run_key_events = len(down)
 
     def vibrate(self, ms):
         os.system(f'termux-vibrate -f -d {ms}')
@@ -72,17 +79,26 @@ class Clicker:
 
     def get_new_events(self):
         self.download_event()
-        return list(filter(lambda x: '0001 0072 00000001' in x, open('data/events.txt', 'r').readlines()))
+        up, down = [], []
+        for i in open('data/events.txt', 'r').readlines():
+            i = float(re.search(r'\d+.\d+', i).group())
+            if i == '0001 0073 00000001':
+                up.append(i)
+            if i == '0001 0072 00000001':
+                down.append(i)
+        return up, down
 
     def start_clicker(self):
         self.vibrate(100)
         self.proc = Popen([sys.executable, 'clicker.py', '--device-name', self.device_name],
-                          stdout=open('out.log', 'a'), stderr=open('err.log', 'a'))
+                          stdout=open('data/clicker_out.log', 'a'), stderr=open('data/clicker_err.log', 'a'))
+        print('Кликер запущен')
 
     def stop_clicker(self):
         self.vibrate(100)
         self.proc.kill()
         self.proc = None
+        print('Кликер остановлен')
 
     def set_home(self):
         if 'home' not in os.listdir('data'):
@@ -100,10 +116,17 @@ class Clicker:
             with open('data/home', 'r') as f:
                 self.home_path = f.read()
 
+
 c = Clicker()
+
+
+def exit():
+    c.proc.kill() if c.proc else ''
+    c.listener.kill() if c.listener else ''
+
+
 try:
     c.main()
 except:
     traceback.print_exc()
-    c.proc.kill() if c.proc else ''
-    c.listener.kill() if c.listener else ''
+    exit()
