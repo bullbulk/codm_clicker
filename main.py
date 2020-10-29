@@ -81,12 +81,12 @@ class Clicker:
         up, down = [], []
         for i in open('data/events.txt', 'r').readlines():
             print(i)
-            i = float(re.search(r'\d+.\d+', i).group())
-            print(i)
             if i == '0001 0073 00000001':
-                up.append(i)
+                print(i)
+                up.append(float(re.search(r'\d+.\d+', i).group()))
+                print(i)
             if i == '0001 0072 00000001':
-                down.append(i)
+                down.append(float(re.search(r'\d+.\d+', i).group()))
         return up, down
 
     def start_clicker(self):
