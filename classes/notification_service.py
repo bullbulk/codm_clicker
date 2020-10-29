@@ -18,23 +18,13 @@ def handler(signal, frame):
         RUNNING = True
 
 
-signal.signal(signal.SIGUSR1, handler)
+def main():
+    pid = int(open('data/listener_pid', 'r').read())
+    os.system('echo 13 > a.txt')
 
-pid = int(open('data/listener_pid', 'r').read())
-os.system('echo 13 > a.txt')
-with open('data/ntf_pid', 'w') as f:
-    f.write(str(os.getpid()))
+    with open('data/ntf_pid', 'w') as f:
+        f.write(str(os.getpid()))
 
-pid_using = True
-
-try:
-    os.kill(pid, 0)
-except OSError:
-    pid_using = False
-else:
-    pid_using = True
-
-while pid_using:
     try:
         os.kill(pid, 0)
     except OSError:
@@ -42,5 +32,17 @@ while pid_using:
     else:
         pid_using = True
 
-else:
-    os.system('termux-notification-remove "clicker"')
+    while pid_using:
+        try:
+            os.kill(pid, 0)
+        except OSError:
+            pid_using = False
+        else:
+            pid_using = True
+
+    else:
+        os.system('termux-notification-remove "clicker"')
+
+
+if __name__ == '__main__':
+    main()
