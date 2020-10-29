@@ -1,6 +1,5 @@
 import platform
 import re
-import signal
 import subprocess
 import sys
 import traceback
@@ -13,11 +12,6 @@ if platform.system() == 'Windows':
     NULL = 'NUL'
 else:
     NULL = 'data/null'
-
-try:
-    os.listdir('classes/data')
-except FileNotFoundError:
-    os.mkdir('classes/data')
 
 
 class Clicker:
@@ -92,6 +86,7 @@ class Clicker:
         self.vibrate(100)
         self.proc.kill()
         self.proc = None
+
 
 c = Clicker()
 try:
