@@ -14,6 +14,11 @@ if platform.system() == 'Windows':
 else:
     NULL = 'data/null'
 
+try:
+    os.listdir('classes/data')
+except FileNotFoundError:
+    os.mkdir('classes/data')
+
 notification = 'termux-notification -c "Кликер запущен" --priority max --id "clicker" --vibrate 100 --ongoing'
 remove_notification = 'termux-notification-remove "codm"'
 
