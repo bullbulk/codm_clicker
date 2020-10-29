@@ -43,6 +43,8 @@ class Clicker:
 
         while True:
             up, down = self.get_new_events()
+            if up or down:
+                print(up, down)
 
             if len(down) - self.run_key_events == 2:
                 diff = down[-1] - down[-2]
