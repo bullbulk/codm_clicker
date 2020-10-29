@@ -43,6 +43,7 @@ class Clicker:
 
         while True:
             up, down = self.get_new_events()
+            print(up, down)
 
             if len(down) - self.run_key_events == 2:
                 diff = down[-1] - down[-2]
@@ -79,7 +80,9 @@ class Clicker:
         self.download_event()
         up, down = [], []
         for i in open('data/events.txt', 'r').readlines():
+            print(i)
             i = float(re.search(r'\d+.\d+', i).group())
+            print(i)
             if i == '0001 0073 00000001':
                 up.append(i)
             if i == '0001 0072 00000001':
