@@ -13,8 +13,6 @@ from PIL import Image
 import config
 from props import *
 
-HOME = '/storage/emulated/0'
-
 try:
     os.listdir('data')
 except FileNotFoundError:
@@ -56,8 +54,8 @@ def similarity(original: str, choices: List[str], percent: int, blacklist=None) 
 
 
 def get_screenshot() -> Image.Image:
-    adb(f'shell screencap -p {HOME}/codm_clicker/scr.png')
-    adb(f'pull {HOME}/codm_clicker/scr.png data/scr.png')
+    adb(f'shell screencap -p /sdcard/codm_clicker/scr.png')
+    adb(f'pull /sdcard/codm_clicker/scr.png data/scr.png')
     return Image.open('data/scr.png')
 
 

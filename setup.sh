@@ -11,6 +11,6 @@ echo "cd $HOME/codm_clicker" > clicker.sh
 echo "python main.py" >> clicker.sh
 echo "alias clicker='bash $HOME/clicker.sh'" >> "$HOME/../usr/etc/bash.bashrc"
 echo "alias clicker-update='cd $HOME/codm_clicker && git pull'" >> "$HOME/../usr/etc/bash.bashrc"
-mkdir -p "/storage/emulated/0/codm_clicker"
+termux-setup-storage
+mkdir -p "/sdcard/codm_clicker"
 rm "$HOME/setup.sh"
-exit

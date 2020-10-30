@@ -7,8 +7,6 @@ from subprocess import Popen
 import classes.errors
 from clicker import *
 
-HOME = '/storage/emulated/0'
-
 
 class Clicker:
     run_key_events = 0
@@ -39,7 +37,7 @@ class Clicker:
             raise classes.errors.DevicesNotFound('Устройства не найдены')
         self.device_name = self.device_name.group()
 
-        adb(f'shell mkdir -p {HOME}/codm_clicker', self.device_name)
+        adb(f'shell mkdir -p /sdcard/codm_clicker', self.device_name)
 
     def main(self):
         self.connect()
@@ -71,7 +69,7 @@ class Clicker:
 
     def download_event(self):
         subprocess.run(
-            f'adb -s {self.device_name} pull {HOME}/codm_clicker/events.txt data/events.txt > data/null',
+            f'adb -s {self.device_name} pull /sdcard/codm_clicker/events.txt data/events.txt > data/null',
             shell=True
         )
 
@@ -79,7 +77,7 @@ class Clicker:
         self.listener = Popen(
             ['adb', '-s', self.device_name, 'shell', 'getevent', '-q', '-t',
              '/dev/input/event1', '> '
-                                  f'{HOME}/codm_clicker/events.txt']
+                                  f'/sdcard/codm_clicker/events.txt']
         )
 
     def get_new_events(self):
