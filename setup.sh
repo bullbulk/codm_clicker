@@ -9,3 +9,5 @@ cd "$HOME" || exit
 echo "cd $HOME/codm_clicker" > clicker.sh
 echo "python main.py" >> clicker.sh
 echo alias clicker="bash $HOME/clicker.sh"
+rm "$HOME/InstallTools.sh"
+rm "$HOME/setup.sh"
