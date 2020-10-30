@@ -7,6 +7,8 @@ from subprocess import Popen
 import classes.errors
 from clicker import *
 
+HOME = '/storage/emulated/0'
+
 
 class Clicker:
     run_key_events = 0
@@ -22,18 +24,22 @@ class Clicker:
         adb('kill-server')
         adb('start-server > data/server')
 
-        if 'error: no devices/emulators found' in open('data/server').readlines():
+        if 'error: no devices/emulators found' in open('data/server', 'r').readlines():
             raise classes.errors.DevicesNotFound('Устройства не найдены')
 
         adb('devices > data/server')
-        self.device_name = re.search(r'emulator-\d+', open('data/server').read())
+        s = open('data/server', 'r').read()
+        if 'unauthorized' in s:
+            raise classes.errors.DevicesNotFound('Устройство не авторизовано. '
+                                                 'Отключите телефон от устройства и нажмите кнопку "Разрешить" '
+                                                 'во всплывающем окне')
+
+        self.device_name = re.search(r'emulator-\d+', s)
         if not self.device_name:
             raise classes.errors.DevicesNotFound('Устройства не найдены')
         self.device_name = self.device_name.group()
 
-        self.set_home()
-
-        adb('shell mkdir -p /sdcard/codm_clicker', self.device_name)
+        adb(f'shell mkdir -p {HOME}/codm_clicker', self.device_name)
 
     def main(self):
         self.connect()
@@ -65,7 +71,7 @@ class Clicker:
 
     def download_event(self):
         subprocess.run(
-            f'adb -s {self.device_name} pull /sdcard/codm_clicker/events.txt data/events.txt > data/null',
+            f'adb -s {self.device_name} pull {HOME}/codm_clicker/events.txt data/events.txt > data/null',
             shell=True
         )
 
@@ -73,7 +79,7 @@ class Clicker:
         self.listener = Popen(
             ['adb', '-s', self.device_name, 'shell', 'getevent', '-q', '-t',
              '/dev/input/event1', '> '
-                                  f'/sdcard/codm_clicker/events.txt']
+                                  f'{HOME}/codm_clicker/events.txt']
         )
 
     def get_new_events(self):
@@ -97,22 +103,6 @@ class Clicker:
         self.proc.kill()
         self.proc = None
         print('Кликер остановлен')
-
-    def set_home(self):
-        if 'home' not in os.listdir('data'):
-            subprocess.run(['adb', 'shell', 'ls', 'sdcard'], stdout=open('data/ls', 'w'))
-            with open('data/ls', 'r') as f:
-                lines = f.readlines()
-                if len(lines) <= 5:
-                    self.home_path = '/sdcard/0'
-                else:
-                    self.home_path = '/sdcard'
-            os.remove('data/ls')
-            with open('data/home', 'w') as f:
-                f.write(self.home_path)
-        else:
-            with open('data/home', 'r') as f:
-                self.home_path = f.read()
 
 
 c = Clicker()

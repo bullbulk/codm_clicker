@@ -3,6 +3,7 @@
 import argparse
 import concurrent.futures
 import os
+import subprocess
 import time
 from typing import List, Tuple
 
@@ -11,6 +12,8 @@ from PIL import Image
 
 import config
 from props import *
+
+HOME = '/storage/emulated/0'
 
 try:
     os.listdir('data')
@@ -43,21 +46,18 @@ def similarity(original: str, choices: List[str], percent: int, blacklist=None) 
 
     for j in blacklist:
         if diff(j, original) > percent or j in original.split():
-            print(1)
             return False
 
     for i in choices:
         if diff(i, original) > percent or i in original.split():
-            print(2)
             return True
 
     return False
 
 
 def get_screenshot() -> Image.Image:
-    adb('shell screencap -p sdcard/codm_clicker/scr.png')
-    adb('pull sdcard/codm_clicker/scr.png data/scr.png')
-    adb('shell rm sdcard/codm_clicker/scr.png')
+    adb(f'shell screencap -p {HOME}/codm_clicker/scr.png')
+    adb(f'pull {HOME}/codm_clicker/scr.png data/scr.png')
     return Image.open('data/scr.png')
 
 
