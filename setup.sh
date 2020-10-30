@@ -11,5 +11,6 @@ cd "$HOME" || exit
 echo "cd $HOME/codm_clicker" > clicker.sh
 echo "python main.py" >> clicker.sh
 echo "alias clicker='bash $HOME/clicker.sh'" >> "$HOME/../usr/etc/bash.bashrc"
+mkdir -p "/storage/emulated/0/codm_clicker"
 rm "$HOME/setup.sh"
 exit
