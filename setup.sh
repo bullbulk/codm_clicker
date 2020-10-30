@@ -1,3 +1,4 @@
+@echo off
 cd "$HOME" || exit
 apt -y install wget python tesseract git
 wget https://github.com/MasterDevX/Termux-ADB/raw/master/InstallTools.sh
